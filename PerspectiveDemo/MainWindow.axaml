@@ -1,0 +1,28 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="PerspectiveDemo.MainWindow"
+        Title="PerspectiveDemo">
+    <Panel>
+        <Canvas Name="Canvas" Width="300" Height="300" Background="LightGray" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Canvas.Styles>
+                <Style Selector="Thumb">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <Rectangle Margin="-5,-5,0,0" Width="10" Height="10" Fill="Black"/>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Canvas.Styles>
+            <Rectangle Name="Rectangle" Canvas.Left="0" Canvas.Top="0" Width="100" Height="100" Fill="Blue"/>
+            <Thumb Name="UL" Canvas.Left="100" Canvas.Top="100" DragDelta="OnDragDelta" ClipToBounds="False"/>
+            <Thumb Name="UR" Canvas.Left="200" Canvas.Top="100" DragDelta="OnDragDelta" ClipToBounds="False"/>
+            <Thumb Name="LL" Canvas.Left="100" Canvas.Top="200" DragDelta="OnDragDelta" ClipToBounds="False"/>
+            <Thumb Name="LR" Canvas.Left="200" Canvas.Top="200" DragDelta="OnDragDelta" ClipToBounds="False"/>
+        </Canvas>
+    </Panel>
+</Window>
