@@ -20,7 +20,7 @@ namespace PerspectiveDemo
 #if DEBUG
             this.AttachDevTools();
 #endif
-            UpdateTransform();
+            //UpdateTransform();
         }
 
         private void InitializeComponent()
