@@ -18,11 +18,11 @@
                     </Setter>
                 </Style>
             </Canvas.Styles>
-            <Rectangle Name="Rectangle" Canvas.Left="0" Canvas.Top="0" Width="100" Height="100" Fill="Blue"/>
-            <Thumb Name="UL" Canvas.Left="100" Canvas.Top="100" DragDelta="OnDragDelta" ClipToBounds="False"/>
-            <Thumb Name="UR" Canvas.Left="200" Canvas.Top="100" DragDelta="OnDragDelta" ClipToBounds="False"/>
-            <Thumb Name="LL" Canvas.Left="100" Canvas.Top="200" DragDelta="OnDragDelta" ClipToBounds="False"/>
-            <Thumb Name="LR" Canvas.Left="200" Canvas.Top="200" DragDelta="OnDragDelta" ClipToBounds="False"/>
+            <Rectangle Name="Rectangle" Canvas.Left="0" Canvas.Top="0" Width="300" Height="300" Fill="Blue"/>
+            <Thumb Name="UL" Canvas.Left="0" Canvas.Top="0" DragDelta="OnDragDelta" ClipToBounds="False"/>
+            <Thumb Name="UR" Canvas.Left="300" Canvas.Top="0" DragDelta="OnDragDelta" ClipToBounds="False"/>
+            <Thumb Name="LL" Canvas.Left="0" Canvas.Top="300" DragDelta="OnDragDelta" ClipToBounds="False"/>
+            <Thumb Name="LR" Canvas.Left="300" Canvas.Top="300" DragDelta="OnDragDelta" ClipToBounds="False"/>
         </Canvas>
     </Panel>
 </Window>
