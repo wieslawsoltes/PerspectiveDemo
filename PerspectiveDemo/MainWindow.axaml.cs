@@ -101,6 +101,9 @@ namespace PerspectiveDemo
 
             // Multiply S * N * A
             var result = S * N * A;
+            
+            // TODO: Multiply does not include perspective
+
             return result;
         }
 
