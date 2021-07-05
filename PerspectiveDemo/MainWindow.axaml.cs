@@ -100,13 +100,30 @@ namespace PerspectiveDemo
                 1);
 
             // Multiply S * N * A
-            var result = S * N * A;
+            //var result = S * N * A;
             
             // TODO: Multiply does not include perspective
+            var result = Multiply(Multiply(S, N), A);
 
             return result;
         }
 
+        public static Matrix Multiply(Matrix a, Matrix b)
+        {
+            return new Matrix(
+                (a.M11 * b.M11) + (a.M12 * b.M21) + (a.M13 * b.M31),
+                (a.M11 * b.M12) + (a.M12 * b.M22) + (a.M13 * b.M32),
+                (a.M11 * b.M13) + (a.M12 * b.M23) + (a.M13 * b.M33),
+                
+                (a.M21 * b.M11) + (a.M22 * b.M21) + (a.M23 * b.M31),
+                (a.M21 * b.M12) + (a.M22 * b.M22) + (a.M23 * b.M32),
+                (a.M21 * b.M13) + (a.M22 * b.M23) + (a.M23 * b.M33),
+
+                (a.M31 * b.M11) + (a.M32 * b.M21) + (a.M33 * b.M31),
+                (a.M31 * b.M12) + (a.M32 * b.M22) + (a.M33 * b.M32),
+                (a.M31 * b.M13) + (a.M32 * b.M23) + (a.M33 * b.M33));
+        }
+        
         private void OnDragDelta(object? sender, VectorEventArgs e)
         {
             if (sender is Thumb thumb)
