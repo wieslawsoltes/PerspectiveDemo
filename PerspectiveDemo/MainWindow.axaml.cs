@@ -9,9 +9,69 @@ using Avalonia.Controls.Shapes;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
+using Avalonia.Platform;
+using Avalonia.Rendering.SceneGraph;
+using Avalonia.Skia;
+using SkiaSharp;
 
 namespace PerspectiveDemo
 {
+    public class CustomCanvas : Canvas
+    {
+        public SKRect _rect;
+        public SKMatrix _matrix;
+
+        public override void Render(DrawingContext context)
+        {
+            base.Render(context);
+            
+            context.Custom(new SkiaCustomDraw(_rect, _matrix));
+        }
+
+        class SkiaCustomDraw : ICustomDrawOperation
+        {
+            private SKRect _rect;
+            private SKMatrix _matrix;
+
+            public SkiaCustomDraw(SKRect rect, SKMatrix matrix)
+            {
+                _rect = rect;
+                _matrix = matrix;
+            }
+            
+            public void Dispose()
+            {
+            }
+
+            public bool HitTest(Point p)
+            {
+                return false;
+            }
+
+            public void Render(IDrawingContextImpl context)
+            {
+                if (context is ISkiaDrawingContextImpl drawingContextImpl)
+                {
+                    var canvas = drawingContextImpl.SkCanvas;
+
+                    canvas.Save();
+                    var result = canvas.TotalMatrix;
+                    result = result.PreConcat(_matrix);
+                    canvas.SetMatrix(result);
+                    //canvas.SetMatrix(_matrix);
+                    canvas.DrawRect(_rect, new SKPaint() { Style = SKPaintStyle.Fill, Color = SKColors.Red});
+                    canvas.Restore();
+                }
+            }
+
+            public Rect Bounds { get; }
+            public bool Equals(ICustomDrawOperation? other)
+            {
+                return false;
+            }
+        }
+    }
+    
     public partial class MainWindow : Window
     {
         public MainWindow()
@@ -30,42 +90,91 @@ namespace PerspectiveDemo
 
         private void UpdateTransform()
         {
-            var canvas = this.FindControl<Canvas>("Canvas");
+            var canvas = this.FindControl<CustomCanvas>("Canvas");
             var rectangle = this.FindControl<Rectangle>("Rectangle");
-
-            var width = rectangle.Width;
-            var height = rectangle.Height;
 
             var ul = this.FindControl<Thumb>("UL");
             var ur = this.FindControl<Thumb>("UR");
             var ll = this.FindControl<Thumb>("LL");
             var lr = this.FindControl<Thumb>("LR");
 
-            var ptUL = new Point(Canvas.GetLeft(ul), Canvas.GetTop(ul));
-            var ptUR = new Point(Canvas.GetLeft(ur), Canvas.GetTop(ur));
-            var ptLL = new Point(Canvas.GetLeft(ll), Canvas.GetTop(ll));
-            var ptLR = new Point(Canvas.GetLeft(lr), Canvas.GetTop(lr));
+            var ptUL = new SKPoint((float)Canvas.GetLeft(ul), (float)Canvas.GetTop(ul));
+            var ptUR = new SKPoint((float)Canvas.GetLeft(ur), (float)Canvas.GetTop(ur));
+            var ptLL = new SKPoint((float)Canvas.GetLeft(ll), (float)Canvas.GetTop(ll));
+            var ptLR = new SKPoint((float)Canvas.GetLeft(lr), (float)Canvas.GetTop(lr));
 
-            var result = ComputeMatrix(new Size(width, height), ptUL, ptUR, ptLL, ptLR);
+            canvas._rect = SKRect.Create(
+                (float)Canvas.GetLeft(rectangle),
+                (float)Canvas.GetTop(rectangle),
+                (float)rectangle.Width,
+                (float)rectangle.Height);
 
-            rectangle.RenderTransformOrigin = RelativePoint.Center;
-            rectangle.RenderTransform = new MatrixTransform(result);
+            canvas._matrix = ComputeMatrix(canvas._rect, ptUL, ptUR, ptLL, ptLR);
+            
+            canvas.InvalidateVisual();
         }
 
-        static Point MapPoint(Matrix matrix, Point point)
+        static SKPoint MapPoint(SKMatrix matrix, SKPoint point)
         {
-            return new Point(
-                (point.X * matrix.M11) + (point.Y * matrix.M21) + matrix.M31,
-                (point.X * matrix.M12) + (point.Y * matrix.M22) + matrix.M32);
+            return new SKPoint(
+                (point.X * matrix.ScaleX) + (point.Y * matrix.SkewX) + matrix.TransX,
+                (point.X * matrix.SkewY) + (point.Y * matrix.ScaleY) + matrix.TransY);
         }
 
-        static Matrix ComputeMatrix(Size size, Point ptUL, Point ptUR, Point ptLL, Point ptLR)
+        static SKMatrix ComputeMatrix(SKRect rect, SKPoint ptUL, SKPoint ptUR, SKPoint ptLL, SKPoint ptLR)
         {
             // Scale transform
-            var S = Matrix.CreateScale(1 / size.Width, 1 / size.Height);
+            SKMatrix S = SKMatrix.MakeScale(1 / rect.Size.Width, 1 / rect.Size.Height);
+            //SKMatrix T = SKMatrix.MakeTranslation(1 / -rect.Left, 1 / -rect.Top);
 
             // Affine transform
-            var A = new Matrix(
+            SKMatrix A = new SKMatrix
+            {
+                ScaleX = ptUR.X - ptUL.X,
+                SkewY = ptUR.Y - ptUL.Y,
+                SkewX = ptLL.X - ptUL.X,
+                ScaleY = ptLL.Y - ptUL.Y,
+                TransX = ptUL.X,
+                TransY = ptUL.Y,
+                Persp2 = 1
+            };
+
+            // Non-Affine transform
+            SKMatrix inverseA;
+            A.TryInvert(out inverseA);
+            SKPoint abPoint = inverseA.MapPoint(ptLR);
+            float a = abPoint.X;
+            float b = abPoint.Y;
+
+            float scaleX = a / (a + b - 1);
+            float scaleY = b / (a + b - 1);
+
+            SKMatrix N = new SKMatrix
+            {
+                ScaleX = scaleX,
+                ScaleY = scaleY,
+                Persp0 = scaleX - 1,
+                Persp1 = scaleY - 1,
+                Persp2 = 1
+            };
+
+            // Multiply S * N * A
+            SKMatrix result = SKMatrix.MakeIdentity();
+            SKMatrix.PostConcat(ref result, S);
+            //SKMatrix.PostConcat(ref result, T);
+            SKMatrix.PostConcat(ref result, N);
+            SKMatrix.PostConcat(ref result, A);
+
+            return result;
+        }
+        
+        static SKMatrix ComputeMatrix2(SKSize size, SKPoint ptUL, SKPoint ptUR, SKPoint ptLL, SKPoint ptLR)
+        {
+            // Scale transform
+            var S = SKMatrix.CreateScale(1 / size.Width, 1 / size.Height);
+
+            // Affine transform
+            var A = new SKMatrix(
                 ptUR.X - ptUL.X,
                 ptUR.Y - ptUL.Y, 
                 0,
@@ -77,18 +186,16 @@ namespace PerspectiveDemo
                 1);
 
             // Non-Affine transform
-            //A.TryInvert(out var inverseA);
+            A.TryInvert(out var inverseA);
             //var abPoint = MapPoint(inverseA, ptLR);
-            //var a = abPoint.X;
-            //var b = abPoint.Y;
-            double den = A.M11 * A.M22 - A.M12 * A.M21;
-            double a = (A.M22 * ptLR.X - A.M21 * ptLR.Y + A.M21 * A.M32 - A.M22 * A.M31) / den;
-            double b = (A.M11 * ptLR.Y - A.M12 * ptLR.X + A.M12 * A.M31 - A.M11 * A.M32) / den;
+            var abPoint = inverseA.MapPoint(ptLR);
+            var a = abPoint.X;
+            var b = abPoint.Y;
 
             var scaleX = a / (a + b - 1);
             var scaleY = b / (a + b - 1);
 
-            var N = new Matrix(
+            var N = new SKMatrix(
                 scaleX,
                 0,
                 scaleX - 1,
@@ -100,10 +207,11 @@ namespace PerspectiveDemo
                 1);
 
             // Multiply S * N * A
-            var result = S * N * A;
-            
-            // TODO: Multiply does not include perspective
-
+            var result = SKMatrix.CreateIdentity();
+            result = result.PreConcat(S);
+            result = result.PreConcat(N);
+            result = result.PreConcat(A);
+  
             return result;
         }
 
