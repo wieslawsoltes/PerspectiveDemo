@@ -58,10 +58,27 @@ namespace PerspectiveDemo
 
         private void UpdateThumbs(Rect rect)
         {
+            var t = this.FindControl<Thumb>("T");
+            var b = this.FindControl<Thumb>("B");
+            var l = this.FindControl<Thumb>("L");
+            var r = this.FindControl<Thumb>("R");
+            
             var ul = this.FindControl<Thumb>("UL");
             var ur = this.FindControl<Thumb>("UR");
             var ll = this.FindControl<Thumb>("LL");
             var lr = this.FindControl<Thumb>("LR");
+
+            Canvas.SetLeft(t, rect.Left + rect.Width / 2);
+            Canvas.SetTop(t, rect.Top);
+
+            Canvas.SetLeft(b, rect.Left + rect.Width / 2);
+            Canvas.SetTop(b, rect.Top + rect.Height);
+
+            Canvas.SetLeft(l, rect.Left);
+            Canvas.SetTop(l, rect.Top + rect.Height / 2);
+            
+            Canvas.SetLeft(r, rect.Left + rect.Width);
+            Canvas.SetTop(r, rect.Top + rect.Height / 2);
 
             Canvas.SetLeft(ul, rect.Left);
             Canvas.SetTop(ul, rect.Top);
@@ -76,6 +93,50 @@ namespace PerspectiveDemo
             Canvas.SetTop(lr, rect.Top + rect.Height);
         }
 
+        private void OnDragDeltaT(object? sender, VectorEventArgs e)
+        {
+            if (sender is Thumb thumb)
+            {
+                var rect = GetRect();
+                var inflated = rect.Inflate(new Thickness(0, -e.Vector.Y, 0, 0));
+                UpdateThumbs(inflated);
+                UpdateRectangle(inflated);
+            }
+        }
+
+        private void OnDragDeltaB(object? sender, VectorEventArgs e)
+        {
+            if (sender is Thumb thumb)
+            {
+                var rect = GetRect();
+                var inflated = rect.Inflate(new Thickness(0, 0, 0, e.Vector.Y));
+                UpdateThumbs(inflated);
+                UpdateRectangle(inflated);
+            }
+        }
+
+        private void OnDragDeltaL(object? sender, VectorEventArgs e)
+        {
+            if (sender is Thumb thumb)
+            {
+                var rect = GetRect();
+                var inflated = rect.Inflate(new Thickness(-e.Vector.X, 0, 0, 0));
+                UpdateThumbs(inflated);
+                UpdateRectangle(inflated);
+            }
+        }
+
+        private void OnDragDeltaR(object? sender, VectorEventArgs e)
+        {
+            if (sender is Thumb thumb)
+            {
+                var rect = GetRect();
+                var inflated = rect.Inflate(new Thickness(0, 0, e.Vector.X, 0));
+                UpdateThumbs(inflated);
+                UpdateRectangle(inflated);
+            }
+        }
+ 
         private void OnDragDeltaUL(object? sender, VectorEventArgs e)
         {
             if (sender is Thumb thumb)
