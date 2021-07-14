@@ -1,14 +1,10 @@
-// https://github.com/AvaloniaUI/Avalonia/pull/6192
-// https://docs.microsoft.com/en-us/xamarin/xamarin-forms/user-interface/graphics/skiasharp/transforms/non-affine
-// http://www.charlespetzold.com/blog/2007/08/250638.html
-using System.Diagnostics;
+using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Shapes;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
-using Avalonia.Media;
 
 namespace PerspectiveDemo
 {
@@ -20,7 +16,6 @@ namespace PerspectiveDemo
 #if DEBUG
             this.AttachDevTools();
 #endif
-            //UpdateTransform();
         }
 
         private void InitializeComponent()
@@ -28,14 +23,8 @@ namespace PerspectiveDemo
             AvaloniaXamlLoader.Load(this);
         }
 
-        private void UpdateTransform()
+        private Rect GetRect()
         {
-            var canvas = this.FindControl<Canvas>("Canvas");
-            var rectangle = this.FindControl<Rectangle>("Rectangle");
-
-            var width = rectangle.Width;
-            var height = rectangle.Height;
-
             var ul = this.FindControl<Thumb>("UL");
             var ur = this.FindControl<Thumb>("UR");
             var ll = this.FindControl<Thumb>("LL");
@@ -46,74 +35,88 @@ namespace PerspectiveDemo
             var ptLL = new Point(Canvas.GetLeft(ll), Canvas.GetTop(ll));
             var ptLR = new Point(Canvas.GetLeft(lr), Canvas.GetTop(lr));
 
-            var result = ComputeMatrix(new Size(width, height), ptUL, ptUR, ptLL, ptLR);
+            var left = Math.Min(Math.Min(ptUL.X, ptUR.X), Math.Min(ptLL.X, ptLR.X));
+            var top = Math.Min(Math.Min(ptUL.Y, ptUR.Y), Math.Min(ptLL.Y, ptLR.Y));
+            var right = Math.Max(Math.Max(ptUL.X, ptUR.X), Math.Max(ptLL.X, ptLR.X));
+            var bottom = Math.Max(Math.Max(ptUL.Y, ptUR.Y), Math.Max(ptLL.Y, ptLR.Y));
+            var width = Math.Abs(right - left);
+            var height = Math.Abs(bottom - top);
 
-            rectangle.RenderTransformOrigin = RelativePoint.Center;
-            rectangle.RenderTransform = new MatrixTransform(result);
+            return new Rect(left, top, width, height);
         }
 
-        static Point MapPoint(Matrix matrix, Point point)
+        private void UpdateRectangle(Rect rect)
         {
-            return new Point(
-                (point.X * matrix.M11) + (point.Y * matrix.M21) + matrix.M31,
-                (point.X * matrix.M12) + (point.Y * matrix.M22) + matrix.M32);
+            var rectangle = this.FindControl<Rectangle>("Rectangle");
+
+            Canvas.SetLeft(rectangle, rect.Left);
+            Canvas.SetTop(rectangle, rect.Top);
+
+            rectangle.Width = rect.Width;
+            rectangle.Height = rect.Height;
         }
 
-        static Matrix ComputeMatrix(Size size, Point ptUL, Point ptUR, Point ptLL, Point ptLR)
+        private void UpdateThumbs(Rect rect)
         {
-            // Scale transform
-            var S = Matrix.CreateScale(1 / size.Width, 1 / size.Height);
+            var ul = this.FindControl<Thumb>("UL");
+            var ur = this.FindControl<Thumb>("UR");
+            var ll = this.FindControl<Thumb>("LL");
+            var lr = this.FindControl<Thumb>("LR");
 
-            // Affine transform
-            var A = new Matrix(
-                ptUR.X - ptUL.X,
-                ptUR.Y - ptUL.Y, 
-                0,
-                ptLL.X - ptUL.X,
-                ptLL.Y - ptUL.Y, 
-                0, 
-                ptUL.X,
-                ptUL.Y,
-                1);
+            Canvas.SetLeft(ul, rect.Left);
+            Canvas.SetTop(ul, rect.Top);
 
-            // Non-Affine transform
-            //A.TryInvert(out var inverseA);
-            //var abPoint = MapPoint(inverseA, ptLR);
-            //var a = abPoint.X;
-            //var b = abPoint.Y;
-            double den = A.M11 * A.M22 - A.M12 * A.M21;
-            double a = (A.M22 * ptLR.X - A.M21 * ptLR.Y + A.M21 * A.M32 - A.M22 * A.M31) / den;
-            double b = (A.M11 * ptLR.Y - A.M12 * ptLR.X + A.M12 * A.M31 - A.M11 * A.M32) / den;
+            Canvas.SetLeft(ur, rect.Left + rect.Width);
+            Canvas.SetTop(ur, rect.Top);
 
-            var scaleX = a / (a + b - 1);
-            var scaleY = b / (a + b - 1);
+            Canvas.SetLeft(ll, rect.Left);
+            Canvas.SetTop(ll, rect.Top + rect.Height);
 
-            var N = new Matrix(
-                scaleX,
-                0,
-                scaleX - 1,
-                0,
-                scaleY,
-                scaleY - 1,
-                0,
-                0,
-                1);
-
-            // Multiply S * N * A
-            var result = S * N * A;
-            
-            // TODO: Multiply does not include perspective
-
-            return result;
+            Canvas.SetLeft(lr, rect.Left + rect.Width);
+            Canvas.SetTop(lr, rect.Top + rect.Height);
         }
 
-        private void OnDragDelta(object? sender, VectorEventArgs e)
+        private void OnDragDeltaUL(object? sender, VectorEventArgs e)
         {
             if (sender is Thumb thumb)
             {
-                Canvas.SetLeft(thumb, Canvas.GetLeft(thumb) + e.Vector.X);
-                Canvas.SetTop(thumb, Canvas.GetTop(thumb) + e.Vector.Y);
-                UpdateTransform();
+                var rect = GetRect();
+                var inflated = rect.Inflate(new Thickness(-e.Vector.X, -e.Vector.Y, 0, 0));
+                UpdateThumbs(inflated);
+                UpdateRectangle(inflated);
+            }
+        }
+
+        private void OnDragDeltaUR(object? sender, VectorEventArgs e)
+        {
+            if (sender is Thumb thumb)
+            {
+                var rect = GetRect();
+                var inflated = rect.Inflate(new Thickness(0, -e.Vector.Y, e.Vector.X, 0));
+                UpdateThumbs(inflated);
+                UpdateRectangle(inflated);
+            }
+        }
+
+        private void OnDragDeltaLL(object? sender, VectorEventArgs e)
+        {
+            if (sender is Thumb thumb)
+            {
+                var rect = GetRect();
+                var inflated = rect.Inflate(new Thickness(-e.Vector.X, 0, 0, e.Vector.Y));
+                UpdateThumbs(inflated);
+                UpdateRectangle(inflated);
+            }
+        }
+
+        private void OnDragDeltaLR(object? sender, VectorEventArgs e)
+        {
+            if (sender is Thumb thumb)
+            {
+                var rect = GetRect();
+                var inflated = rect.Inflate(new Thickness(0, 0, e.Vector.X, e.Vector.Y));
+                UpdateThumbs(inflated);
+                UpdateRectangle(inflated);
             }
         }
     }
