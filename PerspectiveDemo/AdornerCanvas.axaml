@@ -1,0 +1,93 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:PerspectiveDemo">
+    <Design.PreviewWith>
+        <controls:AdornerCanvas />
+    </Design.PreviewWith>
+    <Style Selector="controls|AdornerCanvas">
+        <Setter Property="Template">
+            <ControlTemplate>
+               <Canvas Name="PART_AdornerCanvas" Width="300" Height="300" Background="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center">
+                   <Canvas.Styles>
+                        <Style Selector="Thumb.resize">
+                            <Setter Property="ClipToBounds" Value="False" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate>
+                                        <Rectangle Name="PART_Rectangle">
+                                            <Rectangle.Styles>
+                                                <Style Selector="Rectangle">
+                                                    <Setter Property="Fill" Value="White" />
+                                                    <Setter Property="Stroke" Value="Black" />
+                                                    <Setter Property="StrokeThickness" Value="2" />
+                                                    <Setter Property="Margin" Value="-5,-5,0,0" />
+                                                    <Setter Property="Width" Value="10" />
+                                                    <Setter Property="Height" Value="10" />
+                                                </Style>
+                                            </Rectangle.Styles>
+                                        </Rectangle>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                        <Style Selector="Thumb:pointerover.sizeAll /template/ Rectangle#PART_Rectangle">
+                            <Setter Property="Cursor" Value="SizeAll" />
+                        </Style>
+                        <Style Selector="Thumb:pointerover.topSide /template/ Rectangle#PART_Rectangle">
+                            <Setter Property="Cursor" Value="TopSide" />
+                        </Style>
+                        <Style Selector="Thumb:pointerover.bottomSide /template/ Rectangle#PART_Rectangle">
+                            <Setter Property="Cursor" Value="BottomSide" />
+                        </Style>
+                        <Style Selector="Thumb:pointerover.leftSide /template/ Rectangle#PART_Rectangle">
+                            <Setter Property="Cursor" Value="LeftSide" />
+                        </Style>
+                        <Style Selector="Thumb:pointerover.rightSide /template/ Rectangle#PART_Rectangle">
+                            <Setter Property="Cursor" Value="RightSide" />
+                        </Style>
+                        <Style Selector="Thumb:pointerover.topLeftCorner /template/ Rectangle#PART_Rectangle">
+                            <Setter Property="Cursor" Value="TopLeftCorner" />
+                        </Style>
+                        <Style Selector="Thumb:pointerover.topRightCorner /template/ Rectangle#PART_Rectangle">
+                            <Setter Property="Cursor" Value="TopRightCorner" />
+                        </Style>
+                        <Style Selector="Thumb:pointerover.bottomLeftCorner /template/ Rectangle#PART_Rectangle">
+                            <Setter Property="Cursor" Value="BottomLeftCorner" />
+                        </Style>
+                        <Style Selector="Thumb:pointerover.bottomRightCorner /template/ Rectangle#PART_Rectangle">
+                            <Setter Property="Cursor" Value="BottomRightCorner" />
+                        </Style>
+                        <Style Selector="Thumb:pressed.cross /template/ Rectangle#PART_Rectangle">
+                            <Setter Property="Cursor" Value="Cross" />
+                        </Style>
+                        <Style Selector="Thumb.drag">
+                            <Setter Property="ClipToBounds" Value="False" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate>
+                                        <Rectangle Name="PART_Rectangle">
+                                            <Rectangle.Styles>
+                                                <Style Selector="Rectangle">
+                                                    <Setter Property="Fill" Value="Transparent" />
+                                                </Style>
+                                            </Rectangle.Styles>
+                                        </Rectangle>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Canvas.Styles>
+                    <Thumb Name="PART_DRAG" Classes="drag sizeAll" Canvas.Left="0" Canvas.Top="0" Width="300" Height="300" />
+                    <Thumb Name="PART_T" Classes="resize cross topSide" Canvas.Left="150" Canvas.Top="0" />
+                    <Thumb Name="PART_B" Classes="resize cross bottomSide" Canvas.Left="150" Canvas.Top="300" />
+                    <Thumb Name="PART_L" Classes="resize cross leftSide" Canvas.Left="0" Canvas.Top="150" />
+                    <Thumb Name="PART_R" Classes="resize cross rightSide" Canvas.Left="300" Canvas.Top="150" />
+                    <Thumb Name="PART_UL" Classes="resize cross topLeftCorner" Canvas.Left="0" Canvas.Top="0" />
+                    <Thumb Name="PART_UR" Classes="resize cross topRightCorner" Canvas.Left="300" Canvas.Top="0" />
+                    <Thumb Name="PART_LL" Classes="resize cross bottomLeftCorner" Canvas.Left="0" Canvas.Top="300" />
+                    <Thumb Name="PART_LR" Classes="resize cross bottomRightCorner" Canvas.Left="300" Canvas.Top="300" />
+               </Canvas>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+</Styles>
