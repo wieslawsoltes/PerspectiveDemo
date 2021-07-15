@@ -37,32 +37,35 @@
                         </Setter.Value>
                     </Setter>
                 </Style>
-                <Style Selector="Thumb.sizeAll /template/ Rectangle#PART_Rectangle:pointerover">
+                <Style Selector="Thumb:pointerover.sizeAll /template/ Rectangle#PART_Rectangle">
                     <Setter Property="Cursor" Value="SizeAll" />
                 </Style>
-                <Style Selector="Thumb.topSide /template/ Rectangle#PART_Rectangle:pointerover">
+                <Style Selector="Thumb:pointerover.topSide /template/ Rectangle#PART_Rectangle">
                     <Setter Property="Cursor" Value="TopSide" />
                 </Style>
-                <Style Selector="Thumb.bottomSide /template/ Rectangle#PART_Rectangle:pointerover">
+                <Style Selector="Thumb:pointerover.bottomSide /template/ Rectangle#PART_Rectangle">
                     <Setter Property="Cursor" Value="BottomSide" />
                 </Style>
-                <Style Selector="Thumb.leftSide /template/ Rectangle#PART_Rectangle:pointerover">
+                <Style Selector="Thumb:pointerover.leftSide /template/ Rectangle#PART_Rectangle">
                     <Setter Property="Cursor" Value="LeftSide" />
                 </Style>
-                <Style Selector="Thumb.rightSide /template/ Rectangle#PART_Rectangle:pointerover">
+                <Style Selector="Thumb:pointerover.rightSide /template/ Rectangle#PART_Rectangle">
                     <Setter Property="Cursor" Value="RightSide" />
                 </Style>
-                <Style Selector="Thumb.topLeftCorner /template/ Rectangle#PART_Rectangle:pointerover">
+                <Style Selector="Thumb:pointerover.topLeftCorner /template/ Rectangle#PART_Rectangle">
                     <Setter Property="Cursor" Value="TopLeftCorner" />
                 </Style>
-                <Style Selector="Thumb.topRightCorner /template/ Rectangle#PART_Rectangle:pointerover">
+                <Style Selector="Thumb:pointerover.topRightCorner /template/ Rectangle#PART_Rectangle">
                     <Setter Property="Cursor" Value="TopRightCorner" />
                 </Style>
-                <Style Selector="Thumb.bottomLeftCorner /template/ Rectangle#PART_Rectangle:pointerover">
+                <Style Selector="Thumb:pointerover.bottomLeftCorner /template/ Rectangle#PART_Rectangle">
                     <Setter Property="Cursor" Value="BottomLeftCorner" />
                 </Style>
-                <Style Selector="Thumb.bottomRightCorner /template/ Rectangle#PART_Rectangle:pointerover">
+                <Style Selector="Thumb:pointerover.bottomRightCorner /template/ Rectangle#PART_Rectangle">
                     <Setter Property="Cursor" Value="BottomRightCorner" />
+                </Style>
+                <Style Selector="Thumb:pressed.cross /template/ Rectangle#PART_Rectangle">
+                    <Setter Property="Cursor" Value="Cross" />
                 </Style>
                 <Style Selector="Thumb.drag">
                     <Setter Property="ClipToBounds" Value="False" />
@@ -84,15 +87,15 @@
 
             <Thumb Name="DRAG" Classes="drag sizeAll" Canvas.Left="0" Canvas.Top="0" Width="300" Height="300" DragDelta="OnDragDeltaDRAG" />
 
-            <Thumb Name="T" Classes="resize topSide" Canvas.Left="150" Canvas.Top="0" DragDelta="OnDragDeltaT" />
-            <Thumb Name="B" Classes="resize bottomSide" Canvas.Left="150" Canvas.Top="300" DragDelta="OnDragDeltaB" />
-            <Thumb Name="L" Classes="resize leftSide" Canvas.Left="0" Canvas.Top="150" DragDelta="OnDragDeltaL" />
-            <Thumb Name="R" Classes="resize rightSide" Canvas.Left="300" Canvas.Top="150" DragDelta="OnDragDeltaR" />
+            <Thumb Name="T" Classes="resize cross topSide" Canvas.Left="150" Canvas.Top="0" DragDelta="OnDragDeltaT" />
+            <Thumb Name="B" Classes="resize cross bottomSide" Canvas.Left="150" Canvas.Top="300" DragDelta="OnDragDeltaB" />
+            <Thumb Name="L" Classes="resize cross leftSide" Canvas.Left="0" Canvas.Top="150" DragDelta="OnDragDeltaL" />
+            <Thumb Name="R" Classes="resize cross rightSide" Canvas.Left="300" Canvas.Top="150" DragDelta="OnDragDeltaR" />
 
-            <Thumb Name="UL" Classes="resize topLeftCorner" Canvas.Left="0" Canvas.Top="0" DragDelta="OnDragDeltaUL" />
-            <Thumb Name="UR" Classes="resize topRightCorner" Canvas.Left="300" Canvas.Top="0" DragDelta="OnDragDeltaUR" />
-            <Thumb Name="LL" Classes="resize bottomLeftCorner" Canvas.Left="0" Canvas.Top="300" DragDelta="OnDragDeltaLL" />
-            <Thumb Name="LR" Classes="resize bottomRightCorner" Canvas.Left="300" Canvas.Top="300" DragDelta="OnDragDeltaLR" />
+            <Thumb Name="UL" Classes="resize cross topLeftCorner" Canvas.Left="0" Canvas.Top="0" DragDelta="OnDragDeltaUL" />
+            <Thumb Name="UR" Classes="resize cross topRightCorner" Canvas.Left="300" Canvas.Top="0" DragDelta="OnDragDeltaUR" />
+            <Thumb Name="LL" Classes="resize cross bottomLeftCorner" Canvas.Left="0" Canvas.Top="300" DragDelta="OnDragDeltaLL" />
+            <Thumb Name="LR" Classes="resize cross bottomRightCorner" Canvas.Left="300" Canvas.Top="300" DragDelta="OnDragDeltaLR" />
 
         </Canvas>
 
