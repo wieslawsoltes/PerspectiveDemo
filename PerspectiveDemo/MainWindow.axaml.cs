@@ -8,7 +8,7 @@ namespace PerspectiveDemo
 {
     public partial class MainWindow : Window
     {
-        private AdornerCanvas? _selection;
+        private Selected? _selection;
 
         public MainWindow()
         {
@@ -41,7 +41,7 @@ namespace PerspectiveDemo
                 return;
             }
 
-            _selection = new AdornerCanvas
+            _selection = new Selected
             {
                 [AdornerLayer.AdornedElementProperty] = control,
                 IsHitTestVisible = true,
