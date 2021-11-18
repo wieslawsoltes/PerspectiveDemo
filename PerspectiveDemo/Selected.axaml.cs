@@ -11,9 +11,6 @@ namespace PerspectiveDemo
         public static readonly StyledProperty<Control?> ControlProperty = 
             AvaloniaProperty.Register<Selected, Control?>(nameof(Control));
 
-        public static readonly StyledProperty<Canvas?> CanvasProperty = 
-            AvaloniaProperty.Register<Selected, Canvas?>(nameof(Canvas));
-
         private Canvas? _canvas;
         private Thumb? _drag;
         private Thumb? _top;
@@ -24,6 +21,8 @@ namespace PerspectiveDemo
         private Thumb? _topRight;
         private Thumb? _bottomLeft;
         private Thumb? _bottomRight;
+        private double _leftOffset;
+        private double _topOffset;
 
         public Control? Control
         {
@@ -31,22 +30,16 @@ namespace PerspectiveDemo
             set => SetValue(ControlProperty, value);
         }
 
-        public Canvas? Canvas
-        {
-            get => GetValue(CanvasProperty);
-            set => SetValue(CanvasProperty, value);
-        }
-
         protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
             base.OnApplyTemplate(e);
 
-            var adornedElement = GetValue(AdornerLayer.AdornedElementProperty);
-            if (adornedElement is null)
+            var visual = GetValue(AdornerLayer.AdornedElementProperty);
+            if (visual is not Canvas)
             {
                 return;
             }
-            
+
             _canvas = e.NameScope.Find<Canvas>("PART_Canvas");
             _drag = e.NameScope.Find<Thumb>("PART_Drag");
             _top = e.NameScope.Find<Thumb>("PART_Top");
@@ -105,16 +98,25 @@ namespace PerspectiveDemo
 
             if (Control is { })
             {
-                var rect = new Rect(Canvas.GetLeft(Control), Canvas.GetTop(Control), Control.Width, Control.Height);
+                _leftOffset = Canvas.GetLeft(Control);
+                _topOffset = Canvas.GetTop(Control);
+
+                var rect = new Rect(
+                    0,
+                    0,
+                    Control.Width, 
+                    Control.Height);
 
                 UpdateThumbs(rect);
                 UpdateDrag(rect);
-            }
 
-            if (Canvas is { } && _canvas is { })
-            {
-                _canvas.Width = Canvas.Width;
-                _canvas.Height = Canvas.Height;
+                if (_canvas is { })
+                {
+                    Canvas.SetLeft(_canvas, rect.Left);
+                    Canvas.SetTop(_canvas, rect.Top);
+                    _canvas.Width = rect.Width;
+                    _canvas.Height = rect.Height;
+                }
             }
         }
 
@@ -213,7 +215,7 @@ namespace PerspectiveDemo
 
             if (Control is { })
             {
-                UpdateControl(Control, rect);
+                UpdateControl(Control, rect.Inflate(new Thickness(-_leftOffset, -_topOffset, _leftOffset , _topOffset)));
             }
         }
 
@@ -232,7 +234,7 @@ namespace PerspectiveDemo
 
             if (Control is { })
             {
-                UpdateControl(Control, rect);
+                UpdateControl(Control, rect.Inflate(new Thickness(-_leftOffset, -_topOffset, _leftOffset , _topOffset)));
             }
         }
 
@@ -251,7 +253,7 @@ namespace PerspectiveDemo
 
             if (Control is { })
             {
-                UpdateControl(Control, rect);
+                UpdateControl(Control, rect.Inflate(new Thickness(-_leftOffset, -_topOffset, _leftOffset , _topOffset)));
             }
         }
 
@@ -270,7 +272,7 @@ namespace PerspectiveDemo
 
             if (Control is { })
             {
-                UpdateControl(Control, rect);
+                UpdateControl(Control, rect.Inflate(new Thickness(-_leftOffset, -_topOffset, _leftOffset , _topOffset)));
             }
         }
 
@@ -289,7 +291,7 @@ namespace PerspectiveDemo
 
             if (Control is { })
             {
-                UpdateControl(Control, rect);
+                UpdateControl(Control, rect.Inflate(new Thickness(-_leftOffset, -_topOffset, _leftOffset , _topOffset)));
             }
         }
  
@@ -315,7 +317,7 @@ namespace PerspectiveDemo
 
             if (Control is { })
             {
-                UpdateControl(Control, rect);
+                UpdateControl(Control, rect.Inflate(new Thickness(-_leftOffset, -_topOffset, _leftOffset , _topOffset)));
             }
         }
 
@@ -341,7 +343,7 @@ namespace PerspectiveDemo
 
             if (Control is { })
             {
-                UpdateControl(Control, rect);
+                UpdateControl(Control, rect.Inflate(new Thickness(-_leftOffset, -_topOffset, _leftOffset , _topOffset)));
             }
         }
 
@@ -367,7 +369,7 @@ namespace PerspectiveDemo
 
             if (Control is { })
             {
-                UpdateControl(Control, rect);
+                UpdateControl(Control, rect.Inflate(new Thickness(-_leftOffset, -_topOffset, _leftOffset , _topOffset)));
             }
         }
 
@@ -393,7 +395,7 @@ namespace PerspectiveDemo
 
             if (Control is { })
             {
-                UpdateControl(Control, rect);
+                UpdateControl(Control, rect.Inflate(new Thickness(-_leftOffset, -_topOffset, _leftOffset , _topOffset)));
             }
         }
     }

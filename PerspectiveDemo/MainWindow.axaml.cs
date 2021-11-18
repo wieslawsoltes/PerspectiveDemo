@@ -8,7 +8,7 @@ namespace PerspectiveDemo
 {
     public partial class MainWindow : Window
     {
-        private Selected? _selection;
+        private Selected? _selected;
 
         public MainWindow()
         {
@@ -21,9 +21,9 @@ namespace PerspectiveDemo
 
             PointerPressed += (_, _) =>
             {
-                if (_selection is null)
+                if (_selected is null)
                 {
-                    AddSelection(rectangle, canvas);
+                    AddSelected(rectangle, canvas);
                 }
             };
         }
@@ -33,38 +33,37 @@ namespace PerspectiveDemo
             AvaloniaXamlLoader.Load(this);
         }
 
-        private void AddSelection(Control control, Canvas canvas)
+        private void AddSelected(Control control, Canvas canvas)
         {
-            var layer = AdornerLayer.GetAdornerLayer(control);
+            var layer = AdornerLayer.GetAdornerLayer(canvas);
             if (layer is null)
             {
                 return;
             }
 
-            _selection = new Selected
+            _selected = new Selected
             {
-                [AdornerLayer.AdornedElementProperty] = control,
+                [AdornerLayer.AdornedElementProperty] = canvas,
                 IsHitTestVisible = true,
                 ClipToBounds = false,
-                Control = control,
-                Canvas = canvas
+                Control = control
             };
 
-            ((ISetLogicalParent) _selection).SetParent(control);
-            layer.Children.Add(_selection);
+            ((ISetLogicalParent) _selected).SetParent(canvas);
+            layer.Children.Add(_selected);
         }
      
-        private void RemoveSelection(Control control)
+        private void RemoveSelected(Canvas canvas)
         {
-            var layer = AdornerLayer.GetAdornerLayer(control);
-            if (layer is null || _selection is null)
+            var layer = AdornerLayer.GetAdornerLayer(canvas);
+            if (layer is null || _selected is null)
             {
                 return;
             }
 
-            layer.Children.Remove(_selection);
-            ((ISetLogicalParent) _selection).SetParent(null);
-            _selection = null;
+            layer.Children.Remove(_selected);
+            ((ISetLogicalParent) _selected).SetParent(null);
+            _selected = null;
         }
     }
 }
