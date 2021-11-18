@@ -12,7 +12,7 @@ namespace PerspectiveDemo
             AvaloniaProperty.Register<AdornerCanvas, Control?>(nameof(Control));
 
         public static readonly StyledProperty<Canvas?> CanvasProperty = 
-            AvaloniaProperty.Register<AdornerCanvas?, Canvas>(nameof(Canvas));
+            AvaloniaProperty.Register<AdornerCanvas, Canvas?>(nameof(Canvas));
 
         private Canvas? _canvas;
         private Thumb? _drag;
