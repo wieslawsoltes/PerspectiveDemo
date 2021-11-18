@@ -41,6 +41,12 @@ namespace PerspectiveDemo
         {
             base.OnApplyTemplate(e);
 
+            var adornedElement = GetValue(AdornerLayer.AdornedElementProperty);
+            if (adornedElement is null)
+            {
+                return;
+            }
+            
             _canvas = e.NameScope.Find<Canvas>("PART_Canvas");
             _drag = e.NameScope.Find<Thumb>("PART_Drag");
             _top = e.NameScope.Find<Thumb>("PART_Top");
