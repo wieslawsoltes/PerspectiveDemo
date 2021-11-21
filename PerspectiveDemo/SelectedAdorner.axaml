@@ -3,10 +3,10 @@
         xmlns:controls="clr-namespace:PerspectiveDemo">
 
   <Design.PreviewWith>
-    <controls:Selected />
+    <controls:SelectedAdorner />
   </Design.PreviewWith>
 
-  <Style Selector="controls|Selected">
+  <Style Selector="controls|SelectedAdorner">
     <Setter Property="Template">
       <ControlTemplate>
         <Canvas Name="PART_Canvas">
@@ -24,7 +24,7 @@
     </Setter>
   </Style>
 
-  <Style Selector="controls|Selected /template/ Canvas#PART_Canvas">
+  <Style Selector="controls|SelectedAdorner /template/ Canvas#PART_Canvas">
     <Setter Property="ClipToBounds" Value="False" />
     <Setter Property="Background" Value="Transparent" />
     <Setter Property="HorizontalAlignment" Value="Center" />

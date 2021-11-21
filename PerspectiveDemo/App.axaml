@@ -3,6 +3,6 @@
              x:Class="PerspectiveDemo.App">
     <Application.Styles>
         <FluentTheme Mode="Light"/>
-        <StyleInclude Source="avares://PerspectiveDemo/Selected.axaml"/>
+        <StyleInclude Source="avares://PerspectiveDemo/SelectedAdorner.axaml"/>
     </Application.Styles>
 </Application>

@@ -6,10 +6,10 @@ using Avalonia.Input;
 
 namespace PerspectiveDemo
 {
-    public class Selected : TemplatedControl
+    public class SelectedAdorner : TemplatedControl
     {
         public static readonly StyledProperty<Control?> ControlProperty = 
-            AvaloniaProperty.Register<Selected, Control?>(nameof(Control));
+            AvaloniaProperty.Register<SelectedAdorner, Control?>(nameof(Control));
 
         private Canvas? _canvas;
         private Thumb? _drag;
